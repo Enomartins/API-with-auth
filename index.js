@@ -4,6 +4,7 @@ const app =  express()
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const authRoutes = require('./routes/auth')
+const private = require('./routes/privateroutes')
 
 dotenv.config()
 
@@ -17,6 +18,7 @@ mongoose.connect(process.env.DB_LINK, { useNewUrlParser: true, useUnifiedTopolog
  
 //Route Middlewares
 app.use('/api/auth', authRoutes)
+app.use('/api/data', private)
 
 
 app.listen(3000, () =>

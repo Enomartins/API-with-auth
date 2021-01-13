@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const User = require('../models/User')
 const Joi = require('joi');
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
 
@@ -43,7 +44,7 @@ router.post('/register', async(req, res) => {
     bcrypt.genSalt(saltRounds, function(err, salt) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
             if (err) return res.send('hashing failed')
-            console.log(hash)
+            //
             hashedPassword = hash
 
             const user = new User({
@@ -98,6 +99,10 @@ router.post('/login', async (req, res) =>{
         if(result) res.status(200).send("User Successfuly LoggedIn")
         else res.status(400).send("The password is wrong")
     });
+
+    var token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET);
+
+    res.header('auth-token', token).send(token)
     
 
 
