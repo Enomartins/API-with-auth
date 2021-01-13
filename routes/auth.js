@@ -19,7 +19,7 @@ router.post('/register', async(req, res) => {
             .required(),
     
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,300}$')),
+            .pattern(new RegExp('^[a-zA-Z0-9]{5,300}$')),
     
         //repeat_password: Joi.ref('password')
     
@@ -76,7 +76,7 @@ router.post('/login', async (req, res) =>{
             .required(),
     
         password: Joi.string()
-            .pattern(new RegExp('^[a-zA-Z0-9]{3,300}$')),
+            .pattern(new RegExp('^[a-zA-Z0-9]{5,300}$')),
     
         //repeat_password: Joi.ref('password')
     
@@ -90,11 +90,13 @@ router.post('/login', async (req, res) =>{
         return res.status(400).send(details[0].message)
     }
 
-    const emailExist = await User.findOne({email: req.body.email})
-    if(!emailExist) return res.status(400).send('The email does not exists')
+    const userExist = await User.findOne({email: req.body.email})
     
-    bcrypt.compare(req.password, 10, function(err, result) {
-        // result == true
+    if(!userExist) return res.status(400).send('The email does not exists')
+    
+    bcrypt.compare(req.body.password, userExist.password).then(function(result) {
+        if(result) res.status(200).send("User Successfuly LoggedIn")
+        else res.status(400).send("The password is wrong")
     });
     
 
